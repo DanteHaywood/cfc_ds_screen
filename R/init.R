@@ -33,7 +33,7 @@ vehicles <- read_csv("data/vehicles.csv")
 
 
 # Set Seed  --------------------------------------------------------------------
-r_seed = 20200225
+r_seed = 20201125
 set.seed(r_seed)
 
 
