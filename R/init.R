@@ -1,8 +1,41 @@
-# Installs ----------------------------
-install.packages("tidyverse")
+# ------------------------------------------------------------------------------
+# init.R
+# Install and load required packages, load the datasets, and save workspace.
+# THIS SCRIPT IS REQUIRED TO REPRODUCE RESULTS.
+# ------------------------------------------------------------------------------
 
 
-# Load data ---------------------------
+# Install Req'd packages -------------------------------------------------------
+packages <- c(
+  "tidyverse",
+  "randomForest",
+  "glmnet",
+  "caret",
+  "ggmap"
+)
+
+install.packages(packages)
+
+# Avoid a bunch of library calls
+# character.only needed to specify that we're using quotes for package names
+lapply(packages, library, character.only = TRUE)
 
 
-# Plot data --------------------------- 
+# Load data --------------------------------------------------------------------
+# Filepath is relative to project, not init.R.
+# Datasets have first column as index, which is why we see a warning after load.
+food_desert <- read_csv("data/food.desert.csv")
+pop <- read_csv("data/population.csv")
+ruca <- read_csv("data/ruca.usda.csv")
+stores <- read_csv("data/stores.csv")
+vehicles <- read_csv("data/vehicles.csv")
+
+
+
+# Set Seed  --------------------------------------------------------------------
+r_seed = 20200225
+set.seed(r_seed)
+
+
+# Save workspace to load in later scripts. -------------------------------------
+save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
