@@ -16,6 +16,11 @@ dim(food_desert)
 # Check for duplicates on keys. Output should have 0 rows if no dupes.
 
 check_dupes(food_desert, "CensusTract")
+check_dupes(pop, "county")
+check_dupes(ruca, "select_state_county_tract")
+check_dupes(stores, "County")
+# dupes in vehicles by tract
+check_dupes(vehicles, "tract")
 
 
 
