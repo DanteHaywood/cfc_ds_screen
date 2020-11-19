@@ -33,6 +33,12 @@ ruca <- read_csv("data/ruca.usda.csv")
 stores <- read_csv("data/stores.csv")
 vehicles <- read_csv("data/vehicles.csv")
 
+# Convert column names to lower case.
+food_desert <- cols_to_lower(food_desert)
+pop <- cols_to_lower(pop)
+ruca <- cols_to_lower(ruca)
+stores <- cols_to_lower(stores)
+vehicles <- cols_to_lower(vehicles)
 
 
 # Set Seed  --------------------------------------------------------------------
