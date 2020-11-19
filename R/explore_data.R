@@ -18,7 +18,7 @@ dim(food_desert)
 check_dupes(food_desert, "censustract")
 
 # Population only available by county
-# county is fips code with 0 padding (chr)
+# county is FIPS code with 0 padding (chr)
 check_dupes(pop, "county")
 
 # select_state_county_tract is unique and full FIPS code for tract
@@ -31,11 +31,12 @@ check_dupes(stores, "county")
 check_dupes(vehicles, "tract")
 # Create full FIPS tract code
 vehicles$fips_tract <- str_c("37", vehicles$county, vehicles$tract)
-# Now check no duplicates on new variable
+# Now check no duplicates on new variable (chr)
 check_dupes(vehicles, "fips_tract")
 
 
 # Summary statistics on interesting variables
+
 
 # Replace NA and any outliers
 
