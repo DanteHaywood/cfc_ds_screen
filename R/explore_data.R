@@ -14,14 +14,25 @@ load("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
 dim(food_desert)
 
 # Check for duplicates on keys. Output should have 0 rows if no dupes.
-
+# censustract is the full FIPS key (num)
 check_dupes(food_desert, "censustract")
-check_dupes(pop, "county")
-check_dupes(ruca, "select_state_county_tract")
-check_dupes(stores, "county")
-# dupes in vehicles by tract
-check_dupes(vehicles, "tract")
 
+# Population only available by county
+# county is fips code with 0 padding (chr)
+check_dupes(pop, "county")
+
+# select_state_county_tract is unique and full FIPS code for tract
+check_dupes(ruca, "select_state_county_tract")
+
+# Stores only available by county, so expect many-to-one join on tracts
+check_dupes(stores, "county")
+
+# dupes in vehicles by tract since it is not full FIPS
+check_dupes(vehicles, "tract")
+# Create full FIPS tract code
+vehicles$fips_tract <- str_c("37", vehicles$county, vehicles$tract)
+# Now check no duplicates on new variable
+check_dupes(vehicles, "fips_tract")
 
 
 # Summary statistics on interesting variables
