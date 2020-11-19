@@ -15,10 +15,9 @@ dim(food_desert)
 
 # Check for duplicates on keys. Output should have 0 rows if no dupes.
 
+check_dupes(food_desert, "CensusTract")
 
-food_desert %>%
-  group_by(CensusTract) %>%
-  filter(n() > 1)
+
 
 # Summary statistics on interesting variables
 

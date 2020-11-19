@@ -20,6 +20,9 @@ install.packages(packages)
 # character.only needed to specify that we're using quotes for package names
 lapply(packages, library, character.only = TRUE)
 
+# Get utility Functions --------------------------------------------------------
+# See this file for documentation if it is not clear where an object comes from.
+source("R/utils.R")
 
 # Load data --------------------------------------------------------------------
 # Filepath is relative to project, not init.R.
