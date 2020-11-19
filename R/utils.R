@@ -19,7 +19,9 @@ check_dupes <- function(df, column) {
   
   dupes <- df %>%
     group_by(.data[[column]]) %>%
-    filter(n() > 1) 
+    filter(n() > 1) %>%
+    arrange(.data[[column]])
+    
   
   n_dupes <- dim(dupes)[1]
   
