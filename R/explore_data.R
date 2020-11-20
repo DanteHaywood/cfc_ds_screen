@@ -182,10 +182,23 @@ vehicles[c("x1", "county", "tract")] <- NULL
 # Convert to compatible type
 vehicles$fips_tract <- as.numeric(vehicles$fips_tract)
 data_join <- data_join %>% left_join(vehicles, 
-                                     by = c("select_state_county_tract" = "fips_tract"))
+                                     by = c("select_state_county_tract" = 
+                                              "fips_tract"))
 # Still maintain 2,195 unique tracts
 dim(data_join)
 check_dupes(data_join, "select_state_county_tract")
 
+summary(data_join)
 
+# From summary, 31 tracts are missing vehicle count data
+# Likely, if these variables prove predictive, I will remove these tracts from
+# modeling dataset. Since there are already zeros present, I cannot consider
+# NA ~ 0. The impact of these 31 tracts recoded to 0 may not have much effect,
+# however.
+min(data_join$pct_hhold_1_veh, na.rm = TRUE)
+
+# data_join should now satisfy the requirement for assignment (1):
+# "Join data sets to create a clean df with one row per tract."
+
+save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
 
