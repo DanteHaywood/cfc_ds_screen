@@ -48,6 +48,8 @@ length(nc_counties)
 # Number of NC Census Tracts: 2,192
 # NC currently has 2,195 tracts according to census.gov:
 # https://www.census.gov/geographies/reference-files/2010/geo/state-local-geo-guides-2010/north-carolina.html#:~:text=North%20Carolina%20has%202%2C195%20census,groups%2C%20and%20288%2C987%20census%20blocks.
+# RUCA dataset actually contains 2,195 tracts, so will be using that as base
+# for joining.
 nc_tracts <- unique(food_desert$censustract)
 length(nc_tracts)
 
@@ -146,16 +148,44 @@ ggplot(food_desert_summary_county,
 
 
 # Join datasets
+# Join pop to ruca first since pop only has county names without FIPS code.
+# This is a workaround to match the FIPS code with county names.
+# Typically I would use a lookup table to do this since any mistakes in 
+# either dataset regarding names and FIPS codes will propagate.
+# RUCA also has the correct number of tracts, 2,195.
 
-#data_join <- left_join(food_desert,)
+pop[c("x1", "state")] <- list(NULL)
+ruca[c("x1","select_state")] <- list(NULL)
 
 
+data_join <- left_join(ruca, pop, by = "county")
+# Confirm no dupes
+dim(data_join)
+dim(ruca)
 
-# Create interesting summary statistics for presentation
+food_desert[c("x1","state")] <- list(NULL)
 
+# Use subset to avoid adding duplicate variables/names
+data_join <- data_join %>% left_join(subset(food_desert, select = -county), 
+                        by = c("select_state_county_tract" = "censustract"))
+dim(data_join)
+# See which tracts are missing food desert data
+data_join[is.na(data_join$food_desert_2017),]
 
+# Stores county variable does not have county appended to column so adding.
+stores$county <- str_c(str_trim(stores$county, side = "both"), " County")
+stores$x1 <- NULL
+data_join <- data_join %>% left_join(stores, 
+                                     by = c("select_county" = "county"))
 
-
+vehicles[c("x1", "county", "tract")] <- NULL
+# Convert to compatible type
+vehicles$fips_tract <- as.numeric(vehicles$fips_tract)
+data_join <- data_join %>% left_join(vehicles, 
+                                     by = c("select_state_county_tract" = "fips_tract"))
+# Still maintain 2,195 unique tracts
+dim(data_join)
+check_dupes(data_join, "select_state_county_tract")
 
 
 
