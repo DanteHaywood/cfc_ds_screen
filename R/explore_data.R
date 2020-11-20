@@ -1,7 +1,6 @@
-# ------------------------------------------------------------------------------
-# explore_data.R
+# explore_data.R ---------------------------------------------------------------
 # Perform basic data exploration and validation.
-# ------------------------------------------------------------------------------
+
 
 library(tidyverse)
 
@@ -59,15 +58,98 @@ unique(food_desert$food_desert_2010)
 
 food_desert$food_desert_2010 <- impute_values(food_desert$food_desert_2010)
 
+# NC tracts listed as food deserts 2010: 134
 sum(food_desert$food_desert_2010)
+# NC tracts listed as food deserts 2017: 368
+# Why the increase?
 sum(food_desert$food_desert_2017)
 
+# Summarize location of food_desert data by county
+unique(food_desert$povertyrate)
+food_desert_summary_county <- food_desert %>% 
+  group_by(county) %>%
+  summarise(n_tract = n(),
+            mean_poverty_rate_tract = mean(povertyrate),
+            mean_family_income_tract = mean(medianfamilyincome),
+            median_poverty_rate_tract = median(povertyrate),
+            median_family_income_tract = median(medianfamilyincome),
+            n_food_desert_tract_2010 = sum(food_desert_2010),
+            n_food_desert_tract_2017 = sum(food_desert_2017),
+            # Normmalize over number of tracts in county
+            pct_food_desert_tract_2010 = sum(food_desert_2010) / n(),
+            pct_food_desert_tract_2017 = sum(food_desert_2017) / n(),
+            chg_food_desert_2010_2017 = sum(food_desert_2017) - 
+              sum(food_desert_2010)
+  ) %>%
+  arrange(desc(mean_poverty_rate_tract))
+
+food_desert_summary_county
+
+# Barplot across each variable in summary to find cutoffs.
+
+# Poverty Rate
+# Mean poverty rate cutoff determined 20
+# No real OUtliers here with an outlandish poverty rate in comparison to others.
+ggplot(food_desert_summary_county, 
+       aes(mean_poverty_rate_tract, 
+           reorder(county, mean_poverty_rate_tract))) +
+  geom_col()
 
 
+top20_county_mean_poverty <- slice_max(food_desert_summary_county, 
+                               mean_poverty_rate_tract, n=20)$county
+bar_idx <- food_desert$county %in% top20_county_mean_poverty
 
-# Replace NA and any outliers
+
+ggplot(food_desert[bar_idx,], aes(county, povertyrate)) + 
+  geom_boxplot()+
+  scale_x_discrete(guide = guide_axis(angle = 60))
+
+# Median Family Income
+# Several wealthy counties: Orange and Wake
+# Poorest family income is Hyde by ~$15K to next highest
+ggplot(food_desert_summary_county, 
+       aes(mean_family_income_tract, 
+           reorder(county, mean_family_income_tract))) +
+  geom_col()
+
+# Food desert 2010
+# 54/100 of counties did not have USDA designated food desert in 2010 eval
+sum(food_desert_summary_county$pct_food_desert_tract_2010 == 0)
+ggplot(food_desert_summary_county, 
+       aes(pct_food_desert_tract_2010, 
+           reorder(county, pct_food_desert_tract_2010))) +
+  geom_col()
+
+# Food desert 2017
+# 83/100 counties with at least one food desert county
+# Scotland, Hyde, and Bladen with highest percents of food deserts
+sum(food_desert_summary_county$pct_food_desert_tract_2017 > 0)
+ggplot(food_desert_summary_county, 
+       aes(pct_food_desert_tract_2017, 
+           reorder(county, pct_food_desert_tract_2017))) +
+  geom_col()
+
+# Change in food desert status between 2010 and 2017
+# Counties that removed food desert tracts: 4
+sum(food_desert_summary_county$chg_food_desert_2010_2017 < 0)
+# Counties that saw no change in food desert tracts: 24
+sum(food_desert_summary_county$chg_food_desert_2010_2017 == 0)
+# Counties that had a larger number of food desert tracts in 2017: 72
+sum(food_desert_summary_county$chg_food_desert_2010_2017 > 0)
+
+ggplot(food_desert_summary_county, 
+       aes(reorder(county, chg_food_desert_2010_2017), 
+       chg_food_desert_2010_2017)) +
+  geom_col() +
+  scale_x_discrete(guide = guide_axis(angle = 60))
+
 
 # Join datasets
+
+#data_join <- left_join(food_desert,)
+
+
 
 # Create interesting summary statistics for presentation
 
