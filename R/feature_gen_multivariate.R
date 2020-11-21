@@ -22,17 +22,25 @@ length(mean_change_pop) == 2195
 hist(mean_change_pop)
 data_join$mean_change_pop <- mean_change_pop
 
-# density_est_2016
-# Confirm no divide by zero
-sum(data_join$population_estimate_2016 == 0)
+# pop_1k_per_sqmi_est_2018
+# 24 tracts with apparent population of 0
+sum(data_join$population2018 <= 0)
+sum(data_join$population2018 < 0)
+hist(data_join$population2018)
+# Meanwhile, the RUCA codes do not agree that the population is zero.
+# This is not an issue given the population is an estimate, but still should
+# consider.
+sum(data_join$population2018 == 0 & data_join$primary_ruca_code_2010 == 99)
 
-data_join$log_density_est_2016 <- log(data_join$land_area_square_miles_2010 *
-  # Divide by square feet in mile for conversion.
-  # Capita per square mile is very small and incomprehensible
-  27878400 / 
-  data_join$population_estimate_2016
-  )
-hist(data_join$log_density_est_2016)
+
+# 1,000 people per square mile in tract
+# Add 1 to avoid zero
+data_join$pop_1k_per_sqmi_est_2018 <- (data_join$population2018 / 1000 + 1) / 
+                                  (data_join$land_area_square_miles_2010 + 1)
+hist(data_join$pop_1k_per_sqmi_est_2018)
+summary(data_join$pop_1k_per_sqmi_est_2018)
+
+data_join[1:10,c("land_area_square_miles_2010", "population2018","log_density_est_2018")]
 
 # groc14_per_1k_capita
 data_join$groc14_per_1k_capita <- data_join$groc14 / 
@@ -55,10 +63,38 @@ data_join$specs14_per_1k_capita <- data_join$specs14 /
 hist(data_join$specs14_per_1k_capita)
 
 # Multivariate Analysis --------------------------------------------------------
+# Now with a set of possible predictor variables, check their interaction
+# with food desert 2017.
+data_join$tract_population_2010 - data_join$x2010_census_population
 
+non_pred_vars <- c("state_county_fips_code",
+             "select_county",
+             "select_state_county_tract",
+             
+             )
+
+ 
 
 # Create training and test dataset ---------------------------------------------
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
 
