@@ -47,4 +47,5 @@ set.seed(r_seed)
 
 
 # Save workspace to load in later scripts. -------------------------------------
+#save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace_bkup.RData")
 save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
