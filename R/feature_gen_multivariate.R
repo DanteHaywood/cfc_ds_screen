@@ -1,8 +1,9 @@
 # feature_gen_multivariate------------------------------------------------------
 # Feature generation and multivariate analysis.
 
-load("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
 
+load("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
+lapply(packages, library, character.only = TRUE)
 
 # Generate Features ------------------------------------------------------------
 
@@ -70,13 +71,57 @@ hist(data_join$specs14_per_1k_capita)
 data_join$tract_population_2010 - data_join$x2010_census_population
 names(data_join)
 
+# Remove non-predictor variables and linear dependence
 non_pred_vars <- c("state_county_fips_code",
              "select_county",
              "select_state_county_tract",
-             
+             "county",
+             "tract",
+             "x2010_census_population",
+             "population_estimate_2011",
+             "population_estimate_2012",
+             "population_estimate_2013",
+             "population_estimate_2014",
+             "population_estimate_2015",
+             "population_estimate_2016",
+             "pct_white_pop_2010",         
+             "pct_black_pop_2010"
              )
 
- 
+# 14 variables to be removed out of 43,. so 29 left for model
+length(non_pred_vars)
+all_train <- data_join %>% select(!all_of(non_pred_vars))
+names(all_train)
+dim(all_train)
+
+# Convert RUCA codes to factor to use in model correctly
+all_train$primary_ruca_code_2010 <- factor(all_train$primary_ruca_code_2010)
+all_train$secondary_ruca_code_2010 <- factor(all_train$secondary_ruca_code_2010)
+
+names(all_train)
+
+# Get list of numeric variables
+numerics <- names(select_if(all_train, is.numeric))
+
+# Plots help see distribution of two categories: food desert and not
+# NOTES on below plots:
+# population_estimate_2018: No real difference
+# poverty_rate, medianfamilyincome: large indicators
+# specs14: small indicator
+# pct_hhold_no_veh + others: strong indicators
+# mean_change_pop: small indicator
+# log_pop_per_sqmi_est_2010: decent indicator
+# Generally concerned that most variables do not have relationship with deserts
+
+for (var in numerics) {
+  print(
+    ggplot(all_train, 
+         aes(factor(food_desert_2017), .data[[var]])) +
+      #geom_boxplot(aes(fill=factor(food_desert_2017)))
+      geom_violin(aes(fill=factor(food_desert_2017)))
+    )
+}
+
 
 # Create training and test dataset ---------------------------------------------
 
