@@ -85,3 +85,48 @@ impute_values <- function(x, value_to_replace = NA, replacer = 0) {
 }
 
 
+# uni_logis --------------------------------------------------------------------
+# Runs a set of univariate logistic regressions and returns useful fit info.
+# and numerics.
+# Arguments:
+#   df: A dataframe with the desired variables.
+#   dependent: A character variable for y.
+#   independents: A character vector of independent, predictor variables.
+# Value:
+#   all_model_df : A dataframe:
+#     variable: The independent variable for a given univariate model fit.
+#     coeff: The fit coefficient for the independent variable.
+#     aic: The AIC for the fit.
+#     converged: Binary if the model converged.
+#     pvalue: Independent variable test of significance's p-value.
+# Tested: TRUE
+uni_logis <- function(df, dependent, independents){
+  
+  for (var in independents) {
+    f <- as.formula(paste(dependent, "~", var))
+    cat("Model:", var, "\n")
+    model <- glm(formula = f, 
+                 family = binomial,
+                 data = df)
+    
+    model_df <- data.frame(
+      variable = var,
+      coeff = as.numeric(model$coefficients[2]),
+      aic = model$aic,
+      converged = model$converged,
+      pvalue = as.numeric(coef(summary(model))[,4][2])
+    )
+    
+    if (var != independents[1]) {
+      all_model_df <- rbind(all_model_df, model_df)
+    } else {
+      all_model_df <- model_df
+    }
+    
+  }
+  
+  cat("Complete!")
+  return(all_model_df)
+  
+}
+
