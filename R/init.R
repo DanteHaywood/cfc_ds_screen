@@ -11,7 +11,8 @@ packages <- c(
   "randomForest",
   "glmnet",
   "caret",
-  "ggmap"
+  "ggmap",
+  "pROC"
 )
 
 install.packages(packages)
