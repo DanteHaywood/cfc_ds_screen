@@ -103,7 +103,7 @@ logi1 <- glm(selected_f, family = binomial, data=train)
 summary(logi1)
 
 # Remove some variables since they are not significant. COuld use stepwise
-# to elminate manual changes.
+# to eliminate manual changes.
 insigs <- c("pct_hhold_2plus_veh", "log_pop_per_sqmi_est_2018")
 selected_features <- selected_features[selected_features %in% insigs == FALSE]
 selected_f <- as.formula(paste("food_desert_2017", " ~ ", 
@@ -138,11 +138,11 @@ roc_coords_all <- data.frame(tpr_rf = roc_coords_rf$tpr,
                              fpr_rf = roc_coords_rf$fpr,
                              tpr_logi = roc_coords_logi$tpr,  
                              fpr_logi = roc_coords_logi$fpr)
-rf_legend_text <- paste("Random Forest (k = 50) \nAUC:", 
+rf_legend_text <- paste("Random Forest (k = 50):", 
                         as.character(round(rf_roc$auc, 2)))
-logi_legend_text <- paste("Logistic Regression \nAUC:", 
+logi_legend_text <- paste("Logistic Regression:", 
                         as.character(round(logi_roc$auc, 2)))
-rand_legend_text <- "Random:\n0.50"
+rand_legend_text <- "Random"
 
 ggplot(roc_coords_all) +
   geom_line(aes(x = fpr_rf, y = tpr_rf, color = "rf_line"), size = 1.2) +
@@ -159,7 +159,7 @@ ggplot(roc_coords_all) +
                                  logi_line = logi_legend_text, 
                                  ref_line = rand_legend_text)
                       ) +
-  theme(legend.position = c(0.85, 0.15),
+  theme(legend.position = c(0.80, 0.15),
         text=element_text(size=16))
 
 
