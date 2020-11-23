@@ -78,11 +78,12 @@ ggplot(rf_importance, aes(importance, reorder(variable, importance))) +
 
 probas_test_rf <- predict(selected_rf, test, type = "prob")[,2]
 
-
-rf_roc <- roc(test$food_desert_2017, probas_test_rf)
+# Use the smooth parameter to control the number of points on graph.
+# This will allow plotting different roc calculations together.
+rf_roc <- roc(test$food_desert_2017, probas_test_rf,
+              smooth = TRUE, smooth.n = 200)
 roc_coords_rf <- data.frame(tpr = rf_roc$sensitivities,
-                            fpr = 1 - rf_roc$specificities, 
-                            threshold = rf_roc$thresholds)
+                            fpr = 1 - rf_roc$specificities)
 
 ggplot(roc_coords_rf, aes(fpr, tpr)) +
   geom_line(color = "blue", size = 0.8, show.legend = TRUE) +
@@ -94,7 +95,7 @@ ggplot(roc_coords_rf, aes(fpr, tpr)) +
 # Logistic Regression ----------------------------------------------------------
 
 
-selected_f <- as.formula(paste("food_desert_2017_f", " ~ ", 
+selected_f <- as.formula(paste("food_desert_2017", " ~ ", 
                                paste(selected_features, collapse = " + "))
 )
 
@@ -113,15 +114,14 @@ summary(logi2)
 
 probas_test_logi <- predict(logi2, test, type = "response")
 
-
-logi_roc <- roc(test$food_desert_2017, probas_test_logi)
+logi_roc <- roc(test$food_desert_2017, probas_test_logi, 
+                smooth = TRUE, smooth.n = 200)
 roc_coords_logi <- data.frame(tpr = logi_roc$sensitivities,
-                            fpr = 1 - logi_roc$specificities, 
-                            threshold = logi_roc$thresholds)
+                            fpr = 1 - logi_roc$specificities)
 
 ggplot(roc_coords_logi, aes(fpr, tpr)) +
   geom_line(color = "blue", size = 0.8, show.legend = TRUE) +
-  geom_abline(intercept = 0, color = "red", linetype = "longdash", show.legend = TRUE) +
+  geom_abline(intercept = 0, color = "red", linetype = "longdash") +
   xlab("False Positive Rate") +
   ylab("True Positive Rate") +
   theme(legend.position = c(.95, .95))
@@ -130,7 +130,37 @@ ggplot(roc_coords_logi, aes(fpr, tpr)) +
 # This could be due to more variables in Random Forest and non-linearity
 # with log-odds.
 
-# Final Model Selection --------------------------------------------------------
+# Final Model Evaluation -------------------------------------------------------
+
+# Plot ROC curves next to each other
+
+roc_coords_all <- data.frame(tpr_rf = roc_coords_rf$tpr,  
+                             fpr_rf = roc_coords_rf$fpr,
+                             tpr_logi = roc_coords_logi$tpr,  
+                             fpr_logi = roc_coords_logi$fpr)
+rf_legend_text <- paste("Random Forest (k = 50) \nAUC:", 
+                        as.character(round(rf_roc$auc, 2)))
+logi_legend_text <- paste("Logistic Regression \nAUC:", 
+                        as.character(round(logi_roc$auc, 2)))
+rand_legend_text <- "Random:\n0.50"
+
+ggplot(roc_coords_all) +
+  geom_line(aes(x = fpr_rf, y = tpr_rf, color = "rf_line"), size = 1.2) +
+  geom_line(aes(x = fpr_logi, y = tpr_logi, color = "logi_line"),  size = 1.2) +
+  geom_abline(aes(intercept = 0, slope = 1, color = "ref_line"), 
+              linetype = "longdash", size = 1, show.legend = FALSE) +
+  labs(title = "NC Food Desert Prediction", subtitle = "Model ROC") +
+  xlab("False Positive Rate") +
+  ylab("True Positive Rate") +
+  scale_colour_manual(name="ROC AUC",
+                      values = c(rf_line = "blue", logi_line="orange",
+                                 ref_line = "red"),
+                      labels = c(rf_line = rf_legend_text, 
+                                 logi_line = logi_legend_text, 
+                                 ref_line = rand_legend_text)
+                      ) +
+  theme(legend.position = c(0.85, 0.15),
+        text=element_text(size=16))
 
 
 
@@ -146,8 +176,6 @@ ggplot(roc_coords_logi, aes(fpr, tpr)) +
 
 
 
-
-
-
+save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
 
 #
