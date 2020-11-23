@@ -123,15 +123,32 @@ for (var in numerics) {
 }
 
 
+
+# Deal with NA's ---------------------------------------------------------------
+summary(all_train)
+
+# Deal with NA's
+
+# Remove 3 rows with food desert NA since they do not have a population
+# estimate anyway.
+summary(all_train[is.na(all_train$food_desert_2017),])
+na_rm_idx <- is.finite(all_train$food_desert_2017)
+
+# Vehicle dataset has 31 NA
+# Only 1 of these tracts has a population
+summary(all_train[is.na(all_train$pct_hhold_1_veh),])
+# Only 1 is listed as a food desert, so not removing our few tracts listed as
+# food desert.
+sum(all_train[is.na(all_train$pct_hhold_1_veh),'food_desert_2017'] == 1, 
+    na.rm = TRUE)
+
+# Removing all rows with NA seems justified with minimal loss of useful
+# information.
+# New dim: [2164, 29]
+all_train <- all_train %>% na.omit()
+
+
 # Create training and test dataset ---------------------------------------------
-
-
-
-
-
-
-
-
 
 
 
