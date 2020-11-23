@@ -22,7 +22,7 @@ length(mean_change_pop) == 2195
 hist(mean_change_pop)
 data_join$mean_change_pop <- mean_change_pop
 
-# pop_1k_per_sqmi_est_2018
+# pop_per_sqmi_est_2018
 # 24 tracts with apparent population of 0
 sum(data_join$population2018 <= 0)
 sum(data_join$population2018 < 0)
@@ -33,12 +33,14 @@ hist(data_join$population2018)
 sum(data_join$population2018 == 0 & data_join$primary_ruca_code_2010 == 99)
 
 
-# 1,000 people per square mile in tract
-# Add 1 to avoid zero
-data_join$pop_1k_per_sqmi_est_2018 <- (data_join$population2018 / 1000 + 1) / 
-                                  (data_join$land_area_square_miles_2010 + 1)
-hist(data_join$pop_1k_per_sqmi_est_2018)
-summary(data_join$pop_1k_per_sqmi_est_2018)
+# People per square mile in tract
+# Add 1 to avoid zero in log - this also recodes the 0 population tracts back
+# to zero.
+data_join$log_pop_per_sqmi_est_2018 <- log((data_join$population2018) / 
+                            (data_join$land_area_square_miles_2010 + 1e-6) + 1)
+                                  
+hist(data_join$log_pop_per_sqmi_est_2018)
+summary(data_join$log_pop_per_sqmi_est_2018)
 
 data_join[1:10,c("land_area_square_miles_2010", "population2018","log_density_est_2018")]
 
@@ -66,6 +68,7 @@ hist(data_join$specs14_per_1k_capita)
 # Now with a set of possible predictor variables, check their interaction
 # with food desert 2017.
 data_join$tract_population_2010 - data_join$x2010_census_population
+names(data_join)
 
 non_pred_vars <- c("state_county_fips_code",
              "select_county",
