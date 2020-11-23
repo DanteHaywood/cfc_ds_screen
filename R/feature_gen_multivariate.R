@@ -71,10 +71,9 @@ hist(data_join$specs14_per_1k_capita)
 data_join$tract_population_2010 - data_join$x2010_census_population
 names(data_join)
 
-# Remove non-predictor variables and linear dependence
+# Remove non-predictor variables and linear dependence but keep tract id
 non_pred_vars <- c("state_county_fips_code",
              "select_county",
-             "select_state_county_tract",
              "county",
              "tract",
              "x2010_census_population",
@@ -132,7 +131,6 @@ summary(all_train)
 # Remove 3 rows with food desert NA since they do not have a population
 # estimate anyway.
 summary(all_train[is.na(all_train$food_desert_2017),])
-na_rm_idx <- is.finite(all_train$food_desert_2017)
 
 # Vehicle dataset has 31 NA
 # Only 1 of these tracts has a population
@@ -145,21 +143,19 @@ sum(all_train[is.na(all_train$pct_hhold_1_veh),'food_desert_2017'] == 1,
 # Removing all rows with NA seems justified with minimal loss of useful
 # information.
 # New dim: [2164, 29]
-all_train <- all_train %>% na.omit()
+all_train <- all_train %>% na.omit() %>% arrange(select_state_county_tract)
 
 
 # Create training and test dataset ---------------------------------------------
+train <- all_train %>% sample_frac(.70)
+test  <- anti_join(all_train, train, by = "select_state_county_tract")
+dim(train)
+dim(test)
+# Confirm a reasonable split on dependent variable
+sum(all_train$food_desert_2017) / dim(all_train)[1]
+sum(train$food_desert_2017) / dim(train)[1]
+sum(test$food_desert_2017)/ dim(test)[1]
 
 
-
-
-
-
-
-
-
-
-
-#
 save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
 
