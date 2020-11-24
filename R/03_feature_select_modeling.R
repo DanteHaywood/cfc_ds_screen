@@ -183,6 +183,6 @@ hist(all_train$probas_final)
 final_roc <- roc(all_train$food_desert_2017, probas_final, 
                 smooth = TRUE, smooth.n = 200)
 
-save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
+save.image("cfc_ds_screen_workspace.RData")
 
 #

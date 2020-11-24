@@ -155,5 +155,5 @@ sum(train$food_desert_2017) / dim(train)[1]
 sum(test$food_desert_2017)/ dim(test)[1]
 
 
-save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
+save.image("cfc_ds_screen_workspace.RData")
 

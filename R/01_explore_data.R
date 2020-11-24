@@ -5,7 +5,7 @@ source("R/init.R")
 
 
 # Read image created in init.R
-load("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
+load("cfc_ds_screen_workspace.RData")
 
 # Deduping & Join Prep ---------------------------------------------------------
 # Review join keys for part (1) of assignment: a single clean df with one
@@ -199,5 +199,5 @@ min(data_join$pct_hhold_1_veh, na.rm = TRUE)
 # data_join should now satisfy the requirement for assignment (1):
 # "Join data sets to create a clean df with one row per tract."
 
-save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
+save.image("cfc_ds_screen_workspace.RData")
 
