@@ -20,7 +20,7 @@
 * **output**
   * Contains various graphs from analysis.
 * **R**
-  * 00_init.R - Initialize some variables, load packages, set random seed, etc. Source this program when opening the project.
+  * 00_init.R - Initialize some variables, load packages, set random seed, etc. Source this program when opening the project. REQUIRED TO REPRODUCE RESULTS.
   * 01_explore_data.R - Perform univariate exploration of features and generate a clean dataset with one row per tract.
   * 02_feature_gen_multivariate.R - Perform multivariate analysis w.r.t. food deserts and generate features.
   * 03_feature_select_modeling.R - Analyze univariate logistic models and random forests to determine the most predictive models.
