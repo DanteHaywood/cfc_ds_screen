@@ -1,5 +1,5 @@
-# mapping ----------------------------------------------------------------------
-# Build maps by Census tract.
+# 04_mapping_graphing ----------------------------------------------------------------------
+# Build maps and graphs for presentation.
 # Adapted from https://www.r-graph-gallery.com/168-load-a-shape-file-into-r.html
 # And https://www.r-graph-gallery.com/327-chloropleth-map-from-geojson-with-ggplot2.html
 # If having trouble with packages, restart R
@@ -100,7 +100,7 @@ ggplot() +
   ggsave("output/food_desert_prediction_outcome.png", 
          device = "png", bg = "transparent")
 
-# Important vars for printout
+# Plot Multivariate Analysis ---------------------------------------------------
 
 all_train$fd_2017_label <- factor(ifelse(
   all_train$food_desert_2017 == 1,
@@ -136,7 +136,7 @@ for (i in 1:length(graph_vars)) {
   
 }
 
-# Model ROC Curves
+# Model ROC Curves -------------------------------------------------------------
 ggplot(roc_coords_all) +
   geom_line(aes(x = fpr_rf, y = tpr_rf, color = "rf_line"), size = 1.2) +
   geom_line(aes(x = fpr_logi, y = tpr_logi, color = "logi_line"),  size = 1.2) +
@@ -162,7 +162,7 @@ ggplot(roc_coords_all) +
   ) + 
   ggsave("output/roc_comparison.png", device = "png", bg = "transparent")
 
-# Random Forest Feature Importance
+# Random Forest Feature Importance ---------------------------------------------
 ggplot(rf_importance, aes(importance, reorder(variable, importance))) +
   geom_col() + 
   labs(title = "Random Forest (k = 50) Feature Importance", 
@@ -179,7 +179,9 @@ ggplot(rf_importance, aes(importance, reorder(variable, importance))) +
   ggsave("output/rf_importance.png", device = "png", bg = "transparent")
 #
 
-# Food deserts, poverty, and transportation
+# Food deserts, poverty, and transportation ------------------------------------
+
+# Poverty and transportation
 ggplot(all_train, aes(x = povertyrate / 100, y = pct_hhold_no_veh)) +
   geom_point(aes(color = fd_2017_label), alpha = 0.7) +
   labs(title = "Census Tract Poverty Rate versus Vehicle Access",
@@ -198,6 +200,7 @@ ggplot(all_train, aes(x = povertyrate / 100, y = pct_hhold_no_veh)) +
          bg = "transparent")
 
 
+# Need to join variables at the county level.
 food_desert_summary_county$county <- str_c(str_trim(
   food_desert_summary_county$county, side = "both"), " County")
 
@@ -210,7 +213,7 @@ food_desert_summary_county <- left_join(food_desert_summary_county,
 food_desert_summary_county$mean_poverty_rate_tract <- 
   food_desert_summary_county$mean_poverty_rate_tract / 100
 
-
+# Plot county poverty rates, food deserts, and %Black
 ggplot(food_desert_summary_county, aes(x = mean_poverty_rate_tract,
                                        y = pct_food_desert_tract_2017)) +
   geom_point(aes(color = pct_black_pop_2018, size = pct_black_pop_2018)) +
