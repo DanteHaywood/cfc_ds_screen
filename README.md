@@ -25,6 +25,7 @@
   * 02_feature_gen_multivariate.R - Perform multivariate analysis w.r.t. food deserts and generate features.
   * 03_feature_select_modeling.R - Analyze univariate logistic models and random forests to determine the most predictive models.
   * 04_mapping_graphing.R - Build graphs and maps to presentation quality.
+  * utils.R - Utility functions (autoexec).
    
 
 
