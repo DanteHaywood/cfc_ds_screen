@@ -128,7 +128,7 @@ ggplot(food_desert_summary_county,
 sum(food_desert_summary_county$pct_food_desert_tract_2017 > 0)
 ggplot(food_desert_summary_county, 
        aes(pct_food_desert_tract_2017, 
-           reorder(county, pct_food_desert_tract_2017))) +
+           reorder(county, n_food_desert_tract_2017))) +
   geom_col()
 
 # Change in food desert status between 2010 and 2017

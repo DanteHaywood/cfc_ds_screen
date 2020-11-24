@@ -46,15 +46,19 @@ ggplot() +
   scale_color_hue(labels = c("Not Food Desert", "Food Desert")) +
   theme(
     text = element_text(color = "#22211d"),
-    plot.background = element_rect(fill = "#f5f5f2", color = NA),
-    panel.background = element_rect(fill = "#f5f5f2", color = NA),
-    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    #plot.background = element_rect(fill = "#f5f5f5", color = NA),
+    #panel.background = element_rect(fill = "#f5f5f5", color = NA),
+    #legend.background = element_rect(fill = "#f5f5f5", color = NA),
+    plot.background = element_blank(),
+    panel.background = element_blank(),
+    legend.background = element_blank(),
     
     plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
     plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
     legend.position = c(0.1, 0.15)
   ) +
-  coord_map()
+  coord_map() +
+  ggsave("output/food_desert_map.png", device = "png", bg = "transparent")
 
 # Map Food Deserts Prediction --------------------------------------------------
 # Map is really the same as above given model effectiveness
@@ -86,6 +90,44 @@ ggplot() +
     legend.position = c(0.15, 0.15)
   ) +
   coord_map()
+
+# Important vars for printout
+
+all_train$fd_2017_label <- factor(ifelse(
+  all_train$food_desert_2017 == 1,
+  "Food Desert",
+  "Not Food Desert"))
+
+graph_vars <- c("povertyrate", "medianfamilyincome", "pct_hhold_no_veh",
+                "log_pop_per_sqmi_est_2018")
+labs <- c("Poverty Rate", "Median Family Income", "% Households No Vehicle",
+          "Log Population per SqMi. 2018")
+
+for (i in 1:length(graph_vars)) {
+  g <- ggplot(all_train, 
+              aes(fd_2017_label, .data[[graph_vars[i]]])) +
+    geom_boxplot(aes(fill=fd_2017_label)) +
+    #geom_violin(aes(fill=fd_2017_label)) +
+    labs(fill = "Tract Designation") + 
+    xlab("") +
+    ylab(labs[i]) +
+    theme(
+      plot.background = element_blank(),
+      panel.background = element_blank(),
+      legend.background = element_blank(),
+      text = element_text(color = "#22211d", size = 22),
+      plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+      plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47")
+    ) + 
+    guides(fill=FALSE)
+  
+  fname <- paste0("output/", graph_vars[i], "_fd_boxplot.png")
+  print(g)
+  g + ggsave(fname, device = "png", bg = "transparent")
+  
+}
+  
+
 
 
 #
