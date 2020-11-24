@@ -1,5 +1,5 @@
-# feature_gen_multivariate------------------------------------------------------
-# Feature generation and multivariate analysis.
+# 02_feature_gen_multivariate --------------------------------------------------
+# Perform multivariate analysis w.r.t. food deserts and generate features.
 
 source("R/init.R")
 

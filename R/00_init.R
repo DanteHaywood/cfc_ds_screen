@@ -1,8 +1,6 @@
-# ------------------------------------------------------------------------------
-# init.R
+# 00_init.R
 # Install and load required packages, load the datasets, and save workspace.
 # THIS SCRIPT IS REQUIRED TO REPRODUCE RESULTS.
-# ------------------------------------------------------------------------------
 
 
 # Install Req'd packages -------------------------------------------------------

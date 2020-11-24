@@ -1,5 +1,6 @@
-# explore_data.R ---------------------------------------------------------------
-# Perform basic data exploration and validation.
+# 01_explore_data.R ------------------------------------------------------------
+# Perform univariate exploration of features and generate a clean dataset with 
+# one row per tract.
 
 source("R/init.R")
 

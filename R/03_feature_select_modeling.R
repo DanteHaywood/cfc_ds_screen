@@ -1,5 +1,6 @@
-# feature_select_modeling ------------------------------------------------------
-# Feature selection and modeling.
+# 03_feature_select_modeling ------------------------------------------------------
+# Analyze univariate logistic models and random forests to determine the most 
+# predictive models.
 
 source("R/init.R")
 
