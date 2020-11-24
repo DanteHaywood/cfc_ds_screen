@@ -1,8 +1,7 @@
 # explore_data.R ---------------------------------------------------------------
 # Perform basic data exploration and validation.
 
-
-library(tidyverse)
+source("R/init.R")
 
 
 # Read image created in init.R

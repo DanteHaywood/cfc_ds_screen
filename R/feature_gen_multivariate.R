@@ -1,9 +1,7 @@
 # feature_gen_multivariate------------------------------------------------------
 # Feature generation and multivariate analysis.
 
-
-load("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
-lapply(packages, library, character.only = TRUE)
+source("R/init.R")
 
 # Generate Features ------------------------------------------------------------
 

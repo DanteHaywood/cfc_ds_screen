@@ -5,15 +5,20 @@
 # NC Census tract data from US Census 2017
 # https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.2017.html
 
+source("R/init.R")
+
+# Read GeoDB -------------------------------------------------------------------
 spdf <- readOGR( 
   dsn= paste0("data/cb_2017_37_tract_500k") , 
   layer="cb_2017_37_tract_500k",
   verbose=FALSE
 )
 
-# Region gets the census FIPS key from geo db "data"
+# Region gets the census FIPS key from GeoDB "data"
 spdf_fortified <- tidy(spdf, region = "GEOID")
 spdf_fortified$id <- as.numeric(spdf_fortified$id)
+
+rm(spdf)
 
 
 # Join our other data

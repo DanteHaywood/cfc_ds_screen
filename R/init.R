@@ -14,8 +14,12 @@ packages <- c(
   "ggmap",
   "pROC",
   "rgdal",
-  "rgeos"
+  "rgeos",
+  "broom",
+  "maptools",
+  "mapproj"
 )
+
 
 # Only install if needed.
 #install.packages(packages)

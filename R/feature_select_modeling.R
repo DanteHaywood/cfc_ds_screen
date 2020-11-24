@@ -1,10 +1,7 @@
 # feature_select_modeling ------------------------------------------------------
 # Feature selection and modeling.
 
-
-load("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
-lapply(packages, library, character.only = TRUE)
-
+source("R/init.R")
 
 # Univariate Logistic Regression Feature Selection -----------------------------
 # Remove dependent variables from numerics
