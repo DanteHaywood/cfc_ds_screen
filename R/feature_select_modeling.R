@@ -12,7 +12,8 @@ numerics <- numerics[numerics %in% c("food_desert_2017", "food_desert_2010",
                                      "select_state_county_tract") == FALSE]
 all_predictors <- c(numerics, "primary_ruca_code_2010")
   
-uni_logis_df <- uni_logis(train, "food_desert_2017", independents = all_predictors)
+uni_logis_df <- uni_logis(train, "food_desert_2017", 
+                          independents = all_predictors)
 sum(uni_logis_df$converged == FALSE)
 # 15 variables have pvalue under 0.05, which means we have some decent choices
 sum(uni_logis_df$pvalue <= 0.05)
@@ -26,6 +27,7 @@ uni_logi_vars <- uni_logis_df[uni_logis_df$pvalue <= 0.1, "variable"]
 # Random Forest Classification Feature Selection -------------------------------
 # Add the food desert factor variable - needed for randomForest classification
 
+all_train$food_desert_2017_f <- factor(all_train$food_desert_2017)
 train$food_desert_2017_f <- factor(train$food_desert_2017)
 test$food_desert_2017_f <- factor(test$food_desert_2017)
 
@@ -87,7 +89,8 @@ roc_coords_rf <- data.frame(tpr = rf_roc$sensitivities,
 
 ggplot(roc_coords_rf, aes(fpr, tpr)) +
   geom_line(color = "blue", size = 0.8, show.legend = TRUE) +
-  geom_abline(intercept = 0, color = "red", linetype = "longdash", show.legend = TRUE) +
+  geom_abline(intercept = 0, color = "red", linetype = "longdash", 
+              show.legend = TRUE) +
   xlab("False Positive Rate") +
   ylab("True Positive Rate") +
   theme(legend.position = c(.95, .95))
@@ -160,21 +163,18 @@ ggplot(roc_coords_all) +
                                  ref_line = rand_legend_text)
                       ) +
   theme(legend.position = c(0.80, 0.15),
-        text=element_text(size=16))
+        text = element_text(color = "#22211d"),
+        plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+        plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47")
+        )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Store Model ------------------------------------------------------------------
+probas_final <- predict(selected_rf, all_train, type = "prob")[,2]
+all_train$probas_final <- probas_final
+hist(all_train$probas_final)
+# Sanity check: ROC AUC should be super high
+final_roc <- roc(all_train$food_desert_2017, probas_final, 
+                smooth = TRUE, smooth.n = 200)
 
 save.image("~/GitHub/cfc_ds_screen/cfc_ds_screen_workspace.RData")
 

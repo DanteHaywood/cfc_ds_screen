@@ -12,10 +12,13 @@ packages <- c(
   "glmnet",
   "caret",
   "ggmap",
-  "pROC"
+  "pROC",
+  "rgdal",
+  "rgeos"
 )
 
-install.packages(packages)
+# Only install if needed.
+#install.packages(packages)
 
 # Avoid a bunch of library calls
 # character.only needed to specify that we're using quotes for package names
