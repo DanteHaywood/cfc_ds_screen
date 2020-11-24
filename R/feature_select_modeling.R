@@ -41,7 +41,7 @@ rf_importance <- data.frame(variable = row.names(rf_selection$importance),
 # pick this up. Likely this means there is some interactive effect between
 # area and other variables since the RF is multivariate + non-linear.
 ggplot(rf_importance, aes(importance, reorder(variable, importance))) +
-  geom_col()
+  geom_col() 
 
 # Select Features  -------------------------------------------------------------
 # Features are selected based on the two selection methods above.
@@ -73,7 +73,15 @@ selected_rf <- randomForest(selected_f, data = train, ntree = 50)
 rf_importance <- data.frame(variable = row.names(selected_rf$importance),
                             importance = as.numeric(selected_rf$importance))
 ggplot(rf_importance, aes(importance, reorder(variable, importance))) +
-  geom_col()
+  geom_col() + 
+  labs(title = "Random Forest (k = 50) Feature Importance", 
+       subtitle = "(Larger is more important)") +
+  xlab("Importance (Mean Decrease Gini)") +
+  ylab("Variable") +
+  theme(text = element_text(color = "#22211d", size = 14),
+        plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+        plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47")
+  )
 
 probas_test_rf <- predict(selected_rf, test, type = "prob")[,2]
 
@@ -160,7 +168,7 @@ ggplot(roc_coords_all) +
                                  ref_line = rand_legend_text)
                       ) +
   theme(legend.position = c(0.80, 0.15),
-        text = element_text(color = "#22211d"),
+        text = element_text(color = "#22211d", size = 14),
         plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
         plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47")
         )

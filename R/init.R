@@ -17,7 +17,8 @@ packages <- c(
   "rgeos",
   "broom",
   "maptools",
-  "mapproj"
+  "mapproj",
+  "viridis"
 )
 
 

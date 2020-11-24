@@ -1,8 +1,9 @@
-# mapping ---------------------------------------------------------------------
+# mapping ----------------------------------------------------------------------
 # Build maps by Census tract.
 # Adapted from https://www.r-graph-gallery.com/168-load-a-shape-file-into-r.html
+# And https://www.r-graph-gallery.com/327-chloropleth-map-from-geojson-with-ggplot2.html
 # If having trouble with packages, restart R
-# NC Census tract data from US Census 2017
+# NC Census tract data from US Census 2017:
 # https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.2017.html
 
 source("R/init.R")
@@ -18,6 +19,7 @@ spdf <- readOGR(
 spdf_fortified <- tidy(spdf, region = "GEOID")
 spdf_fortified$id <- as.numeric(spdf_fortified$id)
 
+# Not needed
 rm(spdf)
 
 
@@ -36,7 +38,7 @@ ggplot() +
   geom_polygon(data = spdf_fortified, 
                aes( x = long, y = lat, group = group, 
                     fill = fd_2017_label), 
-               color = "#f2f2f2", size = 0.3) +
+               size=0) +
   theme_void()+
   labs(title = "USDA Food Desert Designations 2017", 
        subtitle = "By 2017 US Census Tract",
@@ -51,6 +53,37 @@ ggplot() +
     plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
     plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
     legend.position = c(0.1, 0.15)
+  ) +
+  coord_map()
+
+# Map Food Deserts Prediction --------------------------------------------------
+# Map is really the same as above given model effectiveness
+
+ggplot() +
+  geom_polygon(data = spdf_fortified,
+               aes( x = long, y = lat, group = group, 
+                    fill = probas_final), 
+               size = 0) +
+  theme_void()+
+  labs(title = "USDA Food Desert Predictions 2017", 
+       subtitle = "By 2017 US Census Tract") + 
+  scale_fill_viridis(breaks=c(0.7, 0.8, 0.9, 1),
+                     oob = scales::squish_infinite,
+                     name="Food Desert Prediction", 
+                     guide = guide_legend( keyheight = unit(3, units = "mm"), 
+                                           keywidth=unit(12, units = "mm"), 
+                                           label.position = "bottom", 
+                                           title.position = 'top', 
+                                           nrow=1) ) +
+  theme(
+    text = element_text(color = "#22211d"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    
+    plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+    plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
+    legend.position = c(0.15, 0.15)
   ) +
   coord_map()
 
