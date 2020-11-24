@@ -126,8 +126,46 @@ for (i in 1:length(graph_vars)) {
   g + ggsave(fname, device = "png", bg = "transparent")
   
 }
-  
 
+# Model ROC Curves
+ggplot(roc_coords_all) +
+  geom_line(aes(x = fpr_rf, y = tpr_rf, color = "rf_line"), size = 1.2) +
+  geom_line(aes(x = fpr_logi, y = tpr_logi, color = "logi_line"),  size = 1.2) +
+  geom_abline(aes(intercept = 0, slope = 1, color = "ref_line"), 
+              linetype = "longdash", size = 1, show.legend = FALSE) +
+  labs(title = "NC Food Desert Prediction", subtitle = "Model ROC") +
+  xlab("False Positive Rate") +
+  ylab("True Positive Rate") +
+  scale_colour_manual(name="ROC AUC",
+                      values = c(rf_line = "blue", logi_line="orange",
+                                 ref_line = "red"),
+                      labels = c(rf_line = rf_legend_text, 
+                                 logi_line = logi_legend_text, 
+                                 ref_line = rand_legend_text)
+  ) +
+  theme(legend.position = c(0.80, 0.15),
+        text = element_text(color = "#22211d", size = 14),
+        plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+        plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
+        plot.background = element_blank(),
+        #panel.background = element_blank(),
+        legend.background = element_blank(),
+  ) + 
+  ggsave("output/roc_comparison.png", device = "png", bg = "transparent")
 
-
+# Random Forest Feature Importance
+ggplot(rf_importance, aes(importance, reorder(variable, importance))) +
+  geom_col() + 
+  labs(title = "Random Forest (k = 50) Feature Importance", 
+       subtitle = "(Larger is more important)") +
+  xlab("Importance (Mean Decrease Gini)") +
+  ylab("Variable") +
+  theme(text = element_text(color = "#22211d", size = 14),
+        plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+        plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
+        plot.background = element_blank(),
+        #panel.background = element_blank(),
+        legend.background = element_blank(),
+  )+ 
+  ggsave("output/rf_importance.png", device = "png", bg = "transparent")
 #
