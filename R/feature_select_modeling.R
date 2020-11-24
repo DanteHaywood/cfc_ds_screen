@@ -175,7 +175,9 @@ ggplot(roc_coords_all) +
 
 # Store Model ------------------------------------------------------------------
 probas_final <- predict(selected_rf, all_train, type = "prob")[,2]
+preds_final <- predict(selected_rf, all_train)
 all_train$probas_final <- probas_final
+all_train$preds_final <- preds_final
 hist(all_train$probas_final)
 # Sanity check: ROC AUC should be super high
 final_roc <- roc(all_train$food_desert_2017, probas_final, 

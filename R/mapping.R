@@ -62,34 +62,43 @@ ggplot() +
 
 # Map Food Deserts Prediction --------------------------------------------------
 # Map is really the same as above given model effectiveness
+wrong_pred <- factor(ifelse(spdf_fortified$food_desert_2017 != 
+                       spdf_fortified$preds_final,
+                     "False Prediction",
+                     "Correct Prediction"))
+
+spdf_fortified$wrong_pred <- wrong_pred
 
 ggplot() +
   geom_polygon(data = spdf_fortified,
                aes( x = long, y = lat, group = group, 
-                    fill = probas_final), 
+                    fill = wrong_pred), 
                size = 0) +
   theme_void()+
-  labs(title = "USDA Food Desert Predictions 2017", 
+  labs(title = "Random Forest (k=50) Prediction Overview", 
        subtitle = "By 2017 US Census Tract") + 
-  scale_fill_viridis(breaks=c(0.7, 0.8, 0.9, 1),
-                     oob = scales::squish_infinite,
+  scale_fill_viridis(discrete = TRUE,
+                     #oob = scales::squish_infinite,
                      name="Food Desert Prediction", 
-                     guide = guide_legend( keyheight = unit(3, units = "mm"), 
-                                           keywidth=unit(12, units = "mm"), 
-                                           label.position = "bottom", 
-                                           title.position = 'top', 
-                                           nrow=1) ) +
+                     #guide = guide_legend( keyheight = unit(3, units = "mm"), 
+                    #                       keywidth=unit(12, units = "mm"), 
+                    #                       label.position = "bottom", 
+                    #                       title.position = 'top', 
+                    #                       nrow=1) 
+                    ) +
   theme(
     text = element_text(color = "#22211d"),
-    plot.background = element_rect(fill = "#f5f5f2", color = NA),
-    panel.background = element_rect(fill = "#f5f5f2", color = NA),
-    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.background = element_blank(),
+    panel.background = element_blank(),
+    legend.background = element_blank(),
     
     plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
     plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
     legend.position = c(0.15, 0.15)
   ) +
-  coord_map()
+  coord_map() +
+  ggsave("output/food_desert_prediction_outcome.png", 
+         device = "png", bg = "transparent")
 
 # Important vars for printout
 
@@ -148,7 +157,7 @@ ggplot(roc_coords_all) +
         plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
         plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
         plot.background = element_blank(),
-        #panel.background = element_blank(),
+        panel.background = element_blank(),
         legend.background = element_blank(),
   ) + 
   ggsave("output/roc_comparison.png", device = "png", bg = "transparent")
@@ -169,3 +178,57 @@ ggplot(rf_importance, aes(importance, reorder(variable, importance))) +
   )+ 
   ggsave("output/rf_importance.png", device = "png", bg = "transparent")
 #
+
+# Food deserts, poverty, and transportation
+ggplot(all_train, aes(x = povertyrate / 100, y = pct_hhold_no_veh)) +
+  geom_point(aes(color = fd_2017_label), alpha = 0.7) +
+  labs(title = "Census Tract Poverty Rate versus Vehicle Access",
+       color = "Food Desert") +
+  xlab("Poverty Rate") +
+  ylab("% Households with No Vehicle") +
+  theme(legend.position = c(0.80, 0.15),
+        text = element_text(color = "#22211d", size = 14),
+        plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+        plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
+        plot.background = element_blank(),
+        panel.background = element_blank(),
+        legend.background = element_blank(),
+  ) + 
+  ggsave("output/poverty_versus_vehicle.png", device = "png", 
+         bg = "transparent")
+
+
+food_desert_summary_county$county <- str_c(str_trim(
+  food_desert_summary_county$county, side = "both"), " County")
+
+food_desert_summary_county <- left_join(food_desert_summary_county, 
+                  unique(ruca[c("select_county", "county")]), 
+                  by = c("county" = "select_county"))
+food_desert_summary_county <- left_join(food_desert_summary_county,
+                  pop,
+                  by = c("county.y" = "county"))
+food_desert_summary_county$mean_poverty_rate_tract <- 
+  food_desert_summary_county$mean_poverty_rate_tract / 100
+
+
+ggplot(food_desert_summary_county, aes(x = mean_poverty_rate_tract,
+                                       y = pct_food_desert_tract_2017)) +
+  geom_point(aes(color = pct_black_pop_2018, size = pct_black_pop_2018)) +
+  labs(title = "County Poverty Rate versus Food Desert Rate",
+       subtitle = "Size and Color determined by % County Population (Black)",
+       size = "% Black (est)",
+       color = "% Black (est)") +
+  xlab("Poverty Rate") +
+  ylab("% Food Desert Tracts") +
+  theme(text = element_text(color = "#22211d", size = 14),
+        plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47"),
+        plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47"),
+        plot.background = element_blank(),
+        panel.background = element_blank(),
+        legend.background = element_blank(),
+  ) +
+  scale_color_gradient2(midpoint = 0.3, low="blue", high="black") + 
+  ggsave("output/poverty_versus_fd.png", device = "png", 
+         bg = "transparent")
+
+
