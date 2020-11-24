@@ -216,8 +216,8 @@ ggplot(food_desert_summary_county, aes(x = mean_poverty_rate_tract,
   geom_point(aes(color = pct_black_pop_2018, size = pct_black_pop_2018)) +
   labs(title = "County Poverty Rate versus Food Desert Rate",
        subtitle = "Size and Color determined by % County Population (Black)",
-       size = "% Black (est)",
-       color = "% Black (est)") +
+       size = "Size: % Black (est)",
+       color = "Color: % Black (est)") +
   xlab("Poverty Rate") +
   ylab("% Food Desert Tracts") +
   theme(text = element_text(color = "#22211d", size = 14),
