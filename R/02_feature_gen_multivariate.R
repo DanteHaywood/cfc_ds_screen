@@ -41,7 +41,8 @@ data_join$log_pop_per_sqmi_est_2018 <- log((data_join$population2018) /
 hist(data_join$log_pop_per_sqmi_est_2018)
 summary(data_join$log_pop_per_sqmi_est_2018)
 
-data_join[1:10,c("land_area_square_miles_2010", "population2018","log_density_est_2018")]
+data_join[1:10,c("land_area_square_miles_2010", "population2018",
+                 "log_pop_per_sqmi_est_2018")]
 
 # groc14_per_1k_capita
 data_join$groc14_per_1k_capita <- data_join$groc14 / 
